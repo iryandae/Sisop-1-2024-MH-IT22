@@ -17,7 +17,6 @@ duplicate_email() {
     return $?
 }
 
-
 if [[ "$email" == admin ]]; then
         user_type="admin"
     fi
