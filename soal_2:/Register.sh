@@ -41,7 +41,7 @@ echo "$email:$username:$secure_q:$secure_a:$enc_user_password:$user_type" >> acc
     fi
 }
 
-#MAIN MENU#
+##MAIN MENU#
 echo "===== Registration ====="
 read -p "Email: " email
 read -p "Username: " username
