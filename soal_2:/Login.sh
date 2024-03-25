@@ -56,7 +56,7 @@ admin_actions() {
 esac
 }
 
-#MAIN MENU
+##MAIN MENU#
 echo "===== Login ====="
 echo "1. Login"
 echo "2. Forgot Password"
