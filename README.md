@@ -56,3 +56,5 @@ echo "amount: "
 cut -d, -f18 Sandbox.csv | head -"$no_baris" | tail -n 1
 ```
 ## Soal 2
+## Soal 3
+## Soal 4
