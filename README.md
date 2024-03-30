@@ -108,5 +108,6 @@ rm /home/satsujinki/sisopgenshin/genshin_character.zip
 rm /home/satsujinki/sisopgenshin/genshin_character/list_character.csv
 rm /home/satsujinki/sisopgenshin/genshin.zip
 ```
+<img width="992" alt="Screenshot 2024-03-30 at 15 06 50" src="https://github.com/iryandae/Sisop-1-2024-MH-IT22/assets/150358232/bb7a61a3-6892-4e44-97a2-938cb8c32592">
 
 ## Soal 4
