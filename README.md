@@ -108,6 +108,74 @@ rm /home/satsujinki/sisopgenshin/genshin_character.zip
 rm /home/satsujinki/sisopgenshin/genshin_character/list_character.csv
 rm /home/satsujinki/sisopgenshin/genshin.zip
 ```
+Jalankan skrip dengan ``chmod +x`` untuk mengubah izin file dan direktori
+```shell
+chmod +x awal.sh && ./awal.sh
+```
+
 <img width="992" alt="Screenshot 2024-03-30 at 15 06 50" src="https://github.com/iryandae/Sisop-1-2024-MH-IT22/assets/150358232/bb7a61a3-6892-4e44-97a2-938cb8c32592">
+
+
+Untuk menemukan secret picture diperlukan skrip baru bernama search.sh 
+```shell
+touch search.sh && nano search.sh
+```
+Buat fungsi untuk mencatat log.
+```shell
+log() {
+    echo "[$(date +'%d/%m/%y %H:%M:%S')] [$1] [$2]" >> image.log
+}
+```
+Fungsi ini bertanggung jawab untuk mencatat pesan log ke dalam file image.log dengan format yang ditentukan.
+Kemudian buat loop utama yang akan akan berjalan tanpa henti.
+```shell
+while true; do
+    (isi loop)
+done
+
+```
+Setelah itu buat loop untuk mengecek setiap file dengan ekstensi .jpg di direktori tempat skrip berjalan dengan jeda 1 detik
+```shell
+for image in *.jpg; do
+    (isi loop)
+done
+sleep 1
+```
+Dalam loop ``for image`` lakukan ekstraksi pesan tersembunyi dengan steghide.
+```shell
+result=$(steghide extract -sf "$image" -p "" 2>&1)
+```
+Periksa hasil ekstraksi. Jika berhasil, lanjutkan; jika tidak, lanjutkan ke gambar berikutnya. Catat pesan log "FOUND" jika data tersembunyi ditemukan dalam gambar. Lakukan dekripsi teks yang diekstrak dari gambar. Teks yang sebelumnya diubah menjadi representasi hexadesimal lalu dikonversi kembali menjadi teks biasa. Kemudian asil dekripsi disimpan dalam variabel decrypted.
+```shell
+    if [[ "$result" == "wrote" ]]; then
+            log "FOUND" "$image"
+            decrypted=$(xxd -p -c 99999 "${image%.*}.txt" | xxd -r -p)
+                (isi kode)
+    else
+            log "NOT FOUND" "$image"
+    fi
+```
+Periksa apakah teks yang didekripsi mengandung string "http". Jika true tampilkan URL dan unduh URL kemudian ``exit`` dari program, jika false hapus file teks yang diekstrak.
+```shell
+   if [[ "$decrypted" == "http" ]]; then
+                log "URL FOUND" "${image%.*}.txt"
+                echo "URL ditemukan: $decrypted"
+                wget -O secret_image.jpg "$decrypted"
+                exit 0
+            else
+                rm "${image%.*}.txt"
+```
+Jalankan skrip dengan ``chmod +x`` untuk mengubah izin file dan direktori
+```shell
+chmod +x search.sh && ./search.sh
+```
+<img width="992" alt="Screenshot 2024-03-30 at 15 43 02" src="https://github.com/iryandae/Sisop-1-2024-MH-IT22/assets/150358232/e6104af0-04da-4b31-8de9-f4bafa6cc384">
+<img width="1093" alt="Screenshot 2024-03-30 at 15 43 26" src="https://github.com/iryandae/Sisop-1-2024-MH-IT22/assets/150358232/e4906289-d0af-4b1c-b6e6-d51b8e473c16">
+
+Kendala yang dialami:
+1. Setelah menjalankan awal.sh file genshin_character.zip tidak ditemukan.
+2. Output dari awal.sh tidak bisa menampilkan [Nama Senjata] : [jumlah]
+namun bisa menampilkan jumlah] : [Nama Senjata]
+3. Image.log berhasil dibuat dan menuliskan output yang sesuai namun secret picture tidak berhasil ditemukan
 
 ## Soal 4
