@@ -56,6 +56,11 @@ echo "amount: "
 cut -d, -f18 Sandbox.csv | head -"$no_baris" | tail -n 1
 ```
 ## Soal 2
+Membuat folder penyimpanan file.
+```shell
+mkdir deux
+```
+
 ## Soal 3
 Untuk mempermudah,buat direktori untuk menyimpan skrip,download file.enkripsi file.
 ```shell
