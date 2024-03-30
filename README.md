@@ -321,7 +321,9 @@ KENDALA yang dialami:
 ![WhatsApp Image 2024-03-30 at 22 58 03_5cb39273](https://github.com/iryandae/Sisop-1-2024-MH-IT22/assets/151121570/712af667-e5b7-43f1-b9b0-6dfce286d532)
 2. Error saat menghapus user
 ![WhatsApp Image 2024-03-30 at 22 59 23_f99f16cb](https://github.com/iryandae/Sisop-1-2024-MH-IT22/assets/151121570/74c16ee8-deda-4c03-8a2c-9bff640e9498)
+![WhatsApp Image 2024-03-30 at 19 12 15_556a38de](https://github.com/iryandae/Sisop-1-2024-MH-IT22/assets/151121570/fe223b62-c79b-4265-8a97-7f302828d3d5)
 3. Semua pengguna (termasuk bukan admin) bisa menggunakan opsi edit dan delet karena filenya disendirikan, masih kesulitan untuk mencari langkah yang tepat.
+![WhatsApp Image 2024-03-30 at 19 11 19_75f2ab1b](https://github.com/iryandae/Sisop-1-2024-MH-IT22/assets/151121570/fa552f04-eb1c-4266-9361-1655bd4420c0)
 
 ## Soal 3
 Untuk mempermudah, buat direktori untuk menyimpan skrip, download file,enkripsi file.
