@@ -65,12 +65,15 @@ Selanjutnya membuat dan konfigurasi register.sh.
 ```shell
 nano register.sh
 ```
+Mengenkripsi password pengguna menggunakan metode base64.
 ```shell
 #!/bin/bash
 enc_user_password() {
 echo -n "$1" | base64
 }
-
+```
+Untuk menambahkan pengguna (user) baru, dan mengambil email, username, serta beberapa data lainnya.
+```shell
 user_regis() {
     local email=$1
     local username=$2
@@ -78,17 +81,23 @@ user_regis() {
     local secure_a=$4
     local password=$5
     local user_type="user" 
-
+```
+Memeriksa apakah alamat email yang diberikan telah digunakan sebelumnya untuk mendaftar.
+```shell
 duplicate_email() {
     local email=$1
     grep -q "^$email:" account.txt
     return $?
 }
-
+```
+Membuat user menjadi admin (memiliki akses-akses admin) jika pada email yang didaftarkan memiliki kata "admin".
+```shell
 if [[ "$email" == admin ]]; then
         user_type="admin"
     fi
-
+```
+Memeriksa apakah email telah terdaftar sebelumnya. Jika pernah, maka registrasi gagal.
+```shell
 enc_user_password=$(enc_user_password "$password")
 duplicate_email "$email"
     if [ $? -eq 0 ]; then
@@ -96,9 +105,13 @@ duplicate_email "$email"
         echo "Email $email already registered. Please enter another email."
         exit 1
     fi
-
+```
+Memasukan data-data pengguna baru ke file "account.txt".
+```shell
 echo "$email:$username:$secure_q:$secure_a:$enc_user_password:$user_type" >> account.txt
-
+```
+Menghasilkan 2 macam output, jika tipe pengguna adalah admin maka akan terdaftar sebagai admin, jika tidak, akan terdaftar sebagai user biasa.
+```shell
     if [[ $user_type == "admin" ]]; then
         echo "[ $(date +'%d/%m/%Y %H:%M:%S') ] [Registration Succeed] ADMIN $username registered successfully." >> auth.log
         echo "ADMIN $username registered successfully."
@@ -107,7 +120,9 @@ echo "$email:$username:$secure_q:$secure_a:$enc_user_password:$user_type" >> acc
         echo "User $username registered successfully."
     fi
 }
-
+```
+Menu utama yang akan muncul saat menu "register.sh" dijalankan.
+```shell
 ##MAIN MENU#
 echo "===== Registration ====="
 read -p "Email: " email
@@ -116,6 +131,9 @@ read -p "Security Question: " secure_q
 read -p "Security Answer: " secure_a
 read -sp "Password: " password
 echo
+```
+Memastikan password yang dibuat memenuhi kriteria; minmal 8 karakter yang memiliki minimal 1 huruf kapital dan 1 angka. Jika salah satu dari kriteria tidak terpenuhi, pesan kesalahan akan dicetak dan pengguna diminta untuk membuat ulang password. Jika password memenuhi semua kriteria, loop akan dihentikan, dan proses akan dilanjutkan.
+```shell
 while true; do
     if [[ ${#password} -lt 8 || !("$password" =~ [[:lower:]]) || !("$password" =~ [[:upper:]]) || !("$password" =~ [0-9]) ]]; then
         echo "Password must be at least 8 characters, contain at least one uppercase, one lowercase, and one number."
@@ -125,10 +143,11 @@ while true; do
         break
     fi
 done
-
+```
+Mendaftarkan pengguna baru dengan informasi yang diberikan ke dalam file "account.txt" dengan format yang telah ditentukan.
+```shell
 user_regis "$email" "$username" "$secure_q" "$secure_a" "$password"
 ```
-
 Selanjutnya membuat dan konfigurasi login.sh.
 ```shell
 nano login.sh
