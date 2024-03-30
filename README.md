@@ -178,7 +178,7 @@ saved_decrypt_password=$(decrypt_user_password "$saved_password")
     fi
 }
 ```
-
+Pada kasus seperti pengguna yang lupa password, akan dberikan opsi ini, password dapat dilihat dengan menjawab pertanyaan keamanan yang dimasukkan saat mendaftarkan akun. Jika jawaban yang dimasukkan benar, maka password yang disimpan untuk email tersebut di-dekripsi oleh decrypt_user_password(), kemudian akan ditampilkan kepada pengguna. 
 ```shell
 forgot_password() {
     local email=$1
@@ -186,7 +186,7 @@ forgot_password() {
     local correct_answer=$(grep "^$email:" account.txt | cut -d: -f4)
 
     echo "Security Question: $secure_q"
-    read -p "Security Auestion: $secure_a" user_answer
+    read -p "Security Answer: $secure_a" user_answer
 if [ "$user_answer" == "$correct_answer" ]; then
         local saved_password=$(grep "^$email:" account.txt | cut -d: -f5)
         saved_decrypt_password=$(decrypt_user_password "$saved_password")
@@ -196,7 +196,7 @@ if [ "$user_answer" == "$correct_answer" ]; then
     fi
 }
 ```
-
+Beberapa tindakan/akses yang dimiliki oleh tipe pengguna admin, opsi 1, 2, dan 3 akan mengarahkan pada file lain; register.sh, edit.sh, dan delete.sh. Sedangkan di luar opsi tersebut akan mengeluarkan pesan tindakan tidak valid.
 ```shell
 admin_actions() {
     echo "Admin Actions:"
@@ -210,10 +210,10 @@ admin_actions() {
             ./register.sh
             ;;
         2)
-            ./edit_user.sh
+            ./edit.sh
             ;;
         3)
-            ./delete_user.sh
+            ./delete.sh
             ;;
         *)
             echo "Invalid action"
@@ -221,15 +221,16 @@ admin_actions() {
 	esac
 }
 ```
-
-
+Menu utama saat menjalankan login.sh
 ```shell
 ##MAIN MENU#
 echo "===== Login ====="
 echo "1. Login"
 echo "2. Forgot Password"
 read -p "Choose option: " option
-
+```
+Pengguna diminta untuk memasukkan alamat email dan password, kemudian skrip akan mencari email yang cocok dalam file "account.txt". Jika tidak ditemukan, sebuah pesan kesalahan dicetak dan program berhenti. Jika alamat email ditemukan, skrip menggunakan fungsi check_credentials(), jika cocok, pengguna berhasil masuk dan berhasil dicatat. 
+```shell
 case $option in
     1)
         read -p "Email: " email
@@ -246,13 +247,18 @@ case $option in
         check_credentials "$email" "$password"
         if [ $? -eq 0 ]; then
             echo "[ $(date +'%d/%m/%Y %H:%M:%S') ] [LOGIN SUCCESS] User with $email successfuly logged in ." >> auth.log
-
+```
+Jika alamat email memiliki tipe "admin", akan menampilkan menu tindakan admin. 
+```shell
             if [[ $email == "admin" ]]
                 then
                 admin_actions
             else
                 echo "Login successful! No admin privileges."
             fi
+```
+Jika password tidak cocok, pengguna akan ditanya mengenai lupa password. Jika memilih "Y", fungsi forgot_password() dijalankan.
+```shell
         else
             echo "[ $(date +'%d/%m/%Y %H:%M:%S') ] [LOGIN FAILED] ERROR: Incorrect password for $email." >> auth.log
             echo "ERROR: Incorrect password."
@@ -262,10 +268,16 @@ case $option in
             fi
         fi
         ;;
+```
+Opsi ke-2, jika pengguna ingin (langsung) mengatur ulang password.
+```shell
     2)
         read -p "Enter your email: " email
         forgot_password "$email"
         ;;
+```
+Opsi lain tidak valid
+```shell
     *)
         echo "Invalid option"
         ;;
