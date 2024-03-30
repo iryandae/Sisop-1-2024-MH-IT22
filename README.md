@@ -100,7 +100,8 @@ if [ "$user_answer" == "$correct_answer" ]; then
         echo "Incorrect answer."
     fi
 }
-
+```
+```shell
 admin_actions() {
     echo "Admin Actions:"
     echo "1. Add User"
@@ -123,7 +124,8 @@ admin_actions() {
             ;;
 esac
 }
-
+```
+```shell
 ##MAIN MENU#
 echo "===== Login ====="
 echo "1. Login"
@@ -211,7 +213,8 @@ if [ "$user_answer" == "$correct_answer" ]; then
         echo "Incorrect answer."
     fi
 }
-
+```
+```shell
 admin_actions() {
     echo "Admin Actions:"
     echo "1. Add User"
@@ -234,7 +237,8 @@ admin_actions() {
             ;;
 esac
 }
-
+```
+```shell
 ##MAIN MENU#
 echo "===== Login ====="
 echo "1. Login"
