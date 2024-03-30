@@ -57,4 +57,56 @@ cut -d, -f18 Sandbox.csv | head -"$no_baris" | tail -n 1
 ```
 ## Soal 2
 ## Soal 3
+Untuk mempermudah,buat direktori untuk menyimpan skrip,download file.enkripsi file.
+```shell
+mkdir sisopgenshin && cd sisopgenshin
+```
+Kemudian membuat skrip awal.sh dan mengkonfigurasi awal.sh.
+```shell
+touch awal.sh && nano awal.sh
+```
+Setelah itu, gunakan perintah wget untuk mengunduh file, gunakan opsi -O untuk menyimpan file dengan nama genshin.zip.
+```shell
+wget -O genshin.zip "https://drive.google.com/uc?export=download&id=1oGHdTf4_76_RacfmQIV4i7os4sGwa9vN"
+```
+Unzip file dengan command ``unzip`` dan opsi ``-d`` untuk menentukan direktori tujuan ekstraksi.
+```shell
+unzip genshin.zip -d genshin_character
+```
+Masuk ke direktori genshin_character menggunakan command ``cd`` dan gunakan or ``exit`` apabila direktori tidak ditemukan.
+```shell
+cd genshin_character || exit
+```
+Lakukan dekode pada setiap file yang terenkripsi dengan menggunakan metode hexadecimal. Setiap file zip akan diekstrak dengan menggunakan password yang diambil dari nama file itu sendiri (tanpa ekstensi).
+```shell
+for file in *.zip; do
+    unzip -P "$(basename "${file%.*}")" "$file"
+    rm "$file"
+done
+```
+Dengan menggunakan data dari file CSV untuk mengubah nama setiap file gambar agar lebih rapi. Nama file dipisahkan berdasarkan koma (,), dan kemudian digunakan untuk mengganti nama file JPG yang sesuai.
+```shell
+while IFS=',' read -r nama region elemen senjata; do
+    for file in *.jpg; do
+        if [[ "$file" == "$nama" ]]; then
+            mv "$file" "$region - $nama - $elemen - $senjata.jpg"
+        fi
+    done
+done < list_character.csv
+```
+Menghitung jumlah pengguna untuk setiap senjata berdasarkan data dari file CSV. Ini mencetak jumlah pengguna untuk masing-masing senjata yang diurutkan dan dihitung menggunakan ``awk``, ``sort``, dan ``uniq``.
+dan kemudian digunakan untuk mengganti nama file JPG yang sesuai.
+```shell
+echo "Jumlah pengguna untuk setiap senjata:"
+awk -F ',' 'NR > 1 {print $4}' list_character.csv | sort | uniq -c | while read -r count senjata; do
+    echo "$count : $senjata"
+done
+```
+Untuk menghemat penyimpanan hapus file-file yang tidak diperlukan.
+```shell
+rm /home/satsujinki/sisopgenshin/genshin_character.zip
+rm /home/satsujinki/sisopgenshin/genshin_character/list_character.csv
+rm /home/satsujinki/sisopgenshin/genshin.zip
+```
+
 ## Soal 4
