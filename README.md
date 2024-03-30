@@ -82,6 +82,7 @@ user_regis() {
     local password=$5
     local user_type="user" 
 ```
+
 Memeriksa apakah alamat email yang diberikan telah digunakan sebelumnya untuk mendaftar.
 ```shell
 duplicate_email() {
@@ -148,6 +149,8 @@ Mendaftarkan pengguna baru dengan informasi yang diberikan ke dalam file "accoun
 ```shell
 user_regis "$email" "$username" "$secure_q" "$secure_a" "$password"
 ```
+![WhatsApp Image 2024-03-30 at 22 53 06_8014d278](https://github.com/iryandae/Sisop-1-2024-MH-IT22/assets/151121570/2483665c-924a-4bd5-9978-4daafc4f6566)
+
 Selanjutnya membuat dan konfigurasi login.sh.
 ```shell
 nano login.sh
@@ -257,6 +260,8 @@ Jika alamat email memiliki tipe "admin", akan menampilkan menu tindakan admin.
                 echo "Login successful! No admin privileges."
             fi
 ```
+![WhatsApp Image 2024-03-30 at 22 54 25_b2aaf0c1](https://github.com/iryandae/Sisop-1-2024-MH-IT22/assets/151121570/fbbb79ff-9776-4335-b1fe-895a56663edd)
+
 Jika password tidak cocok, pengguna akan ditanya mengenai lupa password. Jika memilih "Y", fungsi forgot_password() dijalankan.
 ```shell
         else
@@ -283,6 +288,40 @@ Opsi lain tidak valid
         ;;
 esac
 ```
+Tambahan untuk opsi edit dan delete yang dibuat terpisah agar tidak perlu login ulang. Menggunakan email karena sebelumnya saat menggunakan username, yang terpanggil adalah username pada program laptop.
+```shell
+nano edit.sh
+#!/bin/bash
+edit() {
+    read -p "Enter email to edit: " email
+    if grep -q "^$email:" /etc/passwd; then
+        read -p "Enter new details for user with the email $email: " new_infos
+        echo "User with the email $email edited successfully with details: $new_details"
+    else
+        echo "User with the email $email does not exist"
+    fi
+}
+edit
+```
+```shell
+nano delete.sh
+delete() {
+    read -p "Enter email to delete: " email
+    if grep -q "^$email:" account.txt; then
+        sed -i "/^$email\$/d" account.txt
+        echo "User with the email $email deleted successfully"
+    else
+        echo "User with the email $email does not exist"
+    fi
+}
+delete
+```
+KENDALA yang dialami:
+1. Saat memasukan detail baru, belum bisa mengganti satu per satu.
+![WhatsApp Image 2024-03-30 at 22 58 03_5cb39273](https://github.com/iryandae/Sisop-1-2024-MH-IT22/assets/151121570/712af667-e5b7-43f1-b9b0-6dfce286d532)
+2. Error saat menghapus user
+![WhatsApp Image 2024-03-30 at 22 59 23_f99f16cb](https://github.com/iryandae/Sisop-1-2024-MH-IT22/assets/151121570/74c16ee8-deda-4c03-8a2c-9bff640e9498)
+3. Semua pengguna (termasuk bukan admin) bisa menggunakan opsi edit dan delet karena filenya disendirikan, masih kesulitan untuk mencari langkah yang tepat.
 
 ## Soal 3
 Untuk mempermudah, buat direktori untuk menyimpan skrip, download file,enkripsi file.
