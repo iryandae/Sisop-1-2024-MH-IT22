@@ -410,3 +410,75 @@ namun bisa menampilkan jumlah] : [Nama Senjata]
 3. Image.log berhasil dibuat dan menuliskan output yang sesuai namun secret picture tidak berhasil ditemukan
 
 ## Soal 4
+Data metrics yang dihasilkan akan disimpan ke dalam file dengan format nama metrics_{YmdHms}.log dengan {YmdHms} merupakan waktu disaat file script bash dijalankan. Dalam pengerjaan, saya menyimpan format nama file tersebut menjadi suatu variable agar lebih mudah digunakan sehingga command line yang akan digunakan dalam file ```minute_log.sh``` akan terlihat seperti ini:
+```shell
+log_time=$(date "+%Y%m%d%H%M%S")
+log_save=metrics_$log_time.log
+```
+dan untuk ```file aggregate_minutes_to_hourly.sh``` menjadi
+```shell
+log_time=$(date "+%Y%m%d%H")
+log_save=metrics_agg_$log_time.log
+```
+Untuk mencatat output dari command ```free -m``` mengubahnya menjadi format yang diinginkan dan menyimpannya dalam file yang sudah ditetapkan, dapat digunakan command sebagai berikut
+```shell
+{
+echo "mem_total,mem_used,mem_free,mem_shared,mem_buff,mem_available,swap_total,swap_used,swap_free,path,path_size"
+free -m | tail -n 2 | awk 'BEGIN {RS=OFS=","} {$1="";$8="";sub(/^,/, "");sub(/,,/, ",");print}' | tr -d '\n'
+echo -n ","
+du -sh ~/ | awk '{print $2","$1}'
+} > "/home/user/log/$log_save"
+```
+command ```{...} > <path/file name>``` digunakan untuk menyimpan output perintah yang dilakukan dalam *bracket* ke dalam file yang ditentukan. Cara yang sama juga saya gunakan untuk file kedua.
+
+command ```awk``` digunakan untuk mengambil output dari ```free -m``` dan mengubahnya sesuai dengan format yang diinginkan. Dalam command line ini, format yang diinginkan direpresentasikan dengan 
+```shell
+'BEGIN {RS=OFS=","} {$1="";$8="";sub(/^,/, "");sub(/,,/, ",")
+```
+kemudian diakhiri dengan perintah ```print``` dan command ```tr -d '\n'``` untuk menghilangkan next line di bagian akhir output ```free -m```. Hal serupa juga digunakan untuk menyusun format dari output command ```du -sh ~/```
+
+Di dalam file aggregasi, untuk mengabungkan data dari log per menit, digunakan command loop untuk setiap file dengan format ```.log``` dalam directory ```/home/user/log``` dan untuk setiap filenya hanya diambil data pada baris ke 2 yang merupakan baris yang berisi data dari command yang sudah dijalankan sebelumnya.
+```shell
+for file in /home/user/log/*.log; do
+	head -n 2 "$file" |tail -n 1 >> "/home/user/log/temp.log"
+done
+```
+Data-data yang disatukan ditulis ulang dalam file *temporary*
+
+Setelah memiliki kumpulan data, untuk mencari data minimum dan maksimum dapat digunakan loop untuk setiap kolom dari data yang ada. Data tersebut akan disusun berdasarkan terkecil dan/ataupun terbesar sesuai dengan ketentuan. Setelah tersusun, data teratas akan disimpan ke dalam file dengan format penulisan sesuai dengan yang sudah ditentukan.
+```shell
+for i in {1..10}; do
+	sort -t, -k$i,$i"n" "/home/user/log/temp.log" | cut -d, -f$i | head -n 1 | tr '\n' ","
+done
+sort -t, -k11,11n "/home/user/log/temp.log" | cut -d, -f11 | head -n 1
+
+echo  "maximum," | tr -d '\n'
+for i in {1..10}; do
+	sort -t, -k$i,$i"nr" "/home/user/log/temp.log"| cut -d, -f$i | head -n 1 | tr '\n' ","
+done
+sort -t, -k11,11nr "/home/user/log/temp.log"| cut -d, -f11 | head -n 1
+```
+Sedangkan, untuk mencari *average* dari kumpulan data tersebut, dapat digunakan command ```awk``` untuk setiap kolomnya untuk menjumlahkan nilai per kolom dan membaginya sesuai jumlah yang ada untuk menghasilkan nilai rata-rata.
+```shell
+echo "average," | tr -d '\n'
+for i in {1..10}; do
+	awk -F"," '{print $i}' "/home/user/log/temp.log" | awk -F"," '{sum[i]+=$i} {sum[i]/NR;print $i}' | cut -d, -f$i | head -n 1 | tr '\n' ","
+done
+awk -F"," '{print $11}' "/home/user/log/temp.log" | awk -F"," '{sum[i]+=$i} {sum[i]/NR;print $i}' | cut -d, -f$i | head -n 1
+```
+Setelah semua proses selesai, dan output sudah disimpan ke dalam file dengan cara yang sama seperti sebelumnya. File *temporary* dari kumpulan file akan dihapuskan
+```shell
+rm "/home/user/log/temp.log"
+```
+Lalu, untuk mengubah akses file supaya file log tadi hanya dapat diakses oleh *user* yang membuatnya digunakan command
+```shell
+chmod 400 "/home/user/log/$log_save"
+```
+Dan yang terakhir, untuk menjalankan file secara otomatis, untuk setiap menitnya bisa digunakan konfigurasi crontab seperti berikut:
+```shell
+* * * * * '/home/user/modul_1/soal_4:/minute_log.sh' 
+```
+dan untuk setiap jamnya dapat menggunakan konfigurasi berikut:
+```shell
+0 * * * * '/home/user/modul_1/soal_4:/aggregate_minutes_to_hourly_log.sh' 
+```
