@@ -62,7 +62,7 @@ mkdir deux
 ```
 
 ## Soal 3
-Untuk mempermudah,buat direktori untuk menyimpan skrip,download file.enkripsi file.
+Untuk mempermudah,buat direktori untuk menyimpan skrip,download file,enkripsi file.
 ```shell
 mkdir sisopgenshin && cd sisopgenshin
 ```
